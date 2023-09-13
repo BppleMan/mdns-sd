@@ -43,7 +43,7 @@ fn integration_success() {
         Some(properties),
     )
     .expect("valid service info");
-    let fullname = my_service.get_fullname().to_string();
+    let fullname = my_service.get_full_name().to_string();
     d.register(my_service)
         .expect("Failed to register our service");
 
@@ -68,10 +68,10 @@ fn integration_success() {
                 ServiceEvent::ServiceResolved(info) => {
                     println!(
                         "Resolved a new service: {} addr(s): {:?}",
-                        info.get_fullname(),
+                        info.get_full_name(),
                         info.get_addresses()
                     );
-                    if info.get_fullname().contains(&instance_name) {
+                    if info.get_full_name().contains(&instance_name) {
                         let mut num = resolve_count_clone.lock().unwrap();
                         *num += 1;
                     }
@@ -237,7 +237,7 @@ fn service_without_properties_with_alter_net() {
         None,
     )
     .expect("valid service info");
-    let fullname = my_service.get_fullname().to_string();
+    let fullname = my_service.get_full_name().to_string();
     d.register(my_service)
         .expect("Failed to register our service");
     println!("Registered service with host_ipv4: {:?}", &host_ipv4);
@@ -251,10 +251,10 @@ fn service_without_properties_with_alter_net() {
                 ServiceEvent::ServiceResolved(info) => {
                     println!(
                         "Resolved a service of {} addr(s): {:?}",
-                        &info.get_fullname(),
+                        &info.get_full_name(),
                         info.get_addresses()
                     );
-                    assert_eq!(fullname.as_str(), info.get_fullname());
+                    assert_eq!(fullname.as_str(), info.get_full_name());
                     let addrs = info.get_addresses();
                     assert_eq!(addrs.len(), 1); // first_ipv4 but no alter_ipv4.
                     break;
@@ -390,7 +390,7 @@ fn service_with_invalid_addr() {
                 ServiceEvent::ServiceResolved(info) => {
                     println!(
                         "Resolved a service of {} addr(s): {:?}",
-                        &info.get_fullname(),
+                        &info.get_full_name(),
                         info.get_addresses()
                     );
                     resolved = true;
@@ -438,7 +438,7 @@ fn subtype() {
         None,
     )
     .expect("valid service info");
-    let fullname = my_service.get_fullname().to_string();
+    let fullname = my_service.get_full_name().to_string();
     d.register(my_service)
         .expect("Failed to register our service");
 
@@ -450,8 +450,8 @@ fn subtype() {
             match browse_chan.recv_timeout(timeout) {
                 Ok(event) => match event {
                     ServiceEvent::ServiceResolved(info) => {
-                        println!("Resolved a service of {}", &info.get_fullname());
-                        assert_eq!(fullname.as_str(), info.get_fullname());
+                        println!("Resolved a service of {}", &info.get_full_name());
+                        assert_eq!(fullname.as_str(), info.get_full_name());
                         break;
                     }
                     e => {
@@ -551,7 +551,7 @@ fn service_new_publish_after_browser() {
                 ServiceEvent::ServiceResolved(info) => {
                     println!(
                         "Resolved a service of {} addr(s): {:?} props: {:?}",
-                        &info.get_fullname(),
+                        &info.get_full_name(),
                         info.get_addresses(),
                         info.get_properties()
                     );

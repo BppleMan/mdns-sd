@@ -698,7 +698,7 @@ impl DnsOutgoing {
                 TYPE_PTR,
                 CLASS_IN,
                 service.get_other_ttl(),
-                service.get_fullname().to_string(),
+                service.get_full_name().to_string(),
             )),
         );
 
@@ -714,14 +714,14 @@ impl DnsOutgoing {
                 TYPE_PTR,
                 CLASS_IN,
                 service.get_other_ttl(),
-                service.get_fullname().to_string(),
+                service.get_full_name().to_string(),
             )));
         }
 
         // Add recommended additional answers according to
         // https://tools.ietf.org/html/rfc6763#section-12.1.
         self.add_additional_answer(Box::new(DnsSrv::new(
-            service.get_fullname(),
+            service.get_full_name(),
             CLASS_IN | CLASS_UNIQUE,
             service.get_host_ttl(),
             service.get_priority(),
@@ -731,7 +731,7 @@ impl DnsOutgoing {
         )));
 
         self.add_additional_answer(Box::new(DnsTxt::new(
-            service.get_fullname(),
+            service.get_full_name(),
             TYPE_TXT,
             CLASS_IN | CLASS_UNIQUE,
             service.get_host_ttl(),

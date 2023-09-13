@@ -70,7 +70,7 @@ fn main() {
 
     // Optionally, we can monitor the daemon events.
     let monitor = mdns.monitor().expect("Failed to monitor the daemon");
-    let service_fullname = service_info.get_fullname().to_string();
+    let service_fullname = service_info.get_full_name().to_string();
     mdns.register(service_info)
         .expect("Failed to register mDNS service");
 

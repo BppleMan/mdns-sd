@@ -175,7 +175,7 @@ impl ServiceDaemon {
     /// If `service_info` has no addresses yet and its `addr_auto` is enabled,
     /// this method will automatically fill in addresses from the host.
     pub fn register(&self, mut service_info: ServiceInfo) -> Result<()> {
-        check_service_name(service_info.get_fullname())?;
+        check_service_name(service_info.get_full_name())?;
 
         if service_info.is_addr_auto() {
             for ifv4 in my_ipv4_interfaces() {
@@ -772,7 +772,7 @@ impl Zeroconf {
         let outgoing_addrs = self.send_unsolicited_response(&info);
         if !outgoing_addrs.is_empty() {
             self.notify_monitors(DaemonEvent::Announce(
-                info.get_fullname().to_string(),
+                info.get_full_name().to_string(),
                 format!("{:?}", &outgoing_addrs),
             ));
         }
@@ -784,7 +784,7 @@ impl Zeroconf {
 
         // The key has to be lower case letter as DNS record name is case insensitive.
         // The info will have the original name.
-        let service_fullname = info.get_fullname().to_lowercase();
+        let service_fullname = info.get_full_name().to_lowercase();
         self.retransmissions.push(ReRun {
             next_time,
             command: Command::RegisterResend(service_fullname.clone()),
@@ -807,7 +807,7 @@ impl Zeroconf {
     /// Send an unsolicited response for owned service via `intf_sock`.
     /// Returns true if sent out successfully.
     fn broadcast_service_on_intf(&self, info: &ServiceInfo, intf_sock: &IntfSock) -> bool {
-        let service_fullname = info.get_fullname();
+        let service_fullname = info.get_full_name();
         debug!("broadcast service {}", service_fullname);
         let mut out = DnsOutgoing::new(FLAGS_QR_RESPONSE | FLAGS_AA);
         out.add_answer_at_time(
@@ -816,7 +816,7 @@ impl Zeroconf {
                 TYPE_PTR,
                 CLASS_IN,
                 info.get_other_ttl(),
-                info.get_fullname().to_string(),
+                info.get_full_name().to_string(),
             )),
             0,
         );
@@ -829,7 +829,7 @@ impl Zeroconf {
                     TYPE_PTR,
                     CLASS_IN,
                     info.get_other_ttl(),
-                    info.get_fullname().to_string(),
+                    info.get_full_name().to_string(),
                 )),
                 0,
             );
@@ -837,7 +837,7 @@ impl Zeroconf {
 
         out.add_answer_at_time(
             Box::new(DnsSrv::new(
-                info.get_fullname(),
+                info.get_full_name(),
                 CLASS_IN | CLASS_UNIQUE,
                 info.get_host_ttl(),
                 info.get_priority(),
@@ -849,7 +849,7 @@ impl Zeroconf {
         );
         out.add_answer_at_time(
             Box::new(DnsTxt::new(
-                info.get_fullname(),
+                info.get_full_name(),
                 TYPE_TXT,
                 CLASS_IN | CLASS_UNIQUE,
                 info.get_other_ttl(),
@@ -888,7 +888,7 @@ impl Zeroconf {
                 TYPE_PTR,
                 CLASS_IN,
                 0,
-                info.get_fullname().to_string(),
+                info.get_full_name().to_string(),
             )),
             0,
         );
@@ -901,7 +901,7 @@ impl Zeroconf {
                     TYPE_PTR,
                     CLASS_IN,
                     0,
-                    info.get_fullname().to_string(),
+                    info.get_full_name().to_string(),
                 )),
                 0,
             );
@@ -909,7 +909,7 @@ impl Zeroconf {
 
         out.add_answer_at_time(
             Box::new(DnsSrv::new(
-                info.get_fullname(),
+                info.get_full_name(),
                 CLASS_IN | CLASS_UNIQUE,
                 0,
                 info.get_priority(),
@@ -921,7 +921,7 @@ impl Zeroconf {
         );
         out.add_answer_at_time(
             Box::new(DnsTxt::new(
-                info.get_fullname(),
+                info.get_full_name(),
                 TYPE_TXT,
                 CLASS_IN | CLASS_UNIQUE,
                 0,

@@ -20,10 +20,10 @@ const DNS_OTHER_TTL: u32 = 4500; // 75 minutes for non-host records (PTR, TXT et
 /// as well as A (IPv4 Address) records.
 #[derive(Debug, Clone)]
 pub struct ServiceInfo {
-    ty_domain: String,          // <service>.<domain>
-    sub_domain: Option<String>, // <subservice>._sub.<service>.<domain>
-    fullname: String,           // <instance>.<service>.<domain>
-    server: String,             // fully qualified name for service host
+    ty_domain: String,           // <service>.<domain>
+    sub_domain: Option<String>,  // <subservice>._sub.<service>.<domain>
+    full_name: String,           // <instance>.<service>.<domain>
+    server: String,              // fully qualified name for service host
     addresses: HashSet<Ipv4Addr>,
     port: u16,
     host_ttl: u32,  // used for SRV and Address records
@@ -32,6 +32,7 @@ pub struct ServiceInfo {
     weight: u16,
     txt_properties: TxtProperties,
     addr_auto: bool, // Let the system update addresses automatically.
+    my_name: String,
 }
 
 impl ServiceInfo {
@@ -67,7 +68,7 @@ impl ServiceInfo {
     ) -> Result<Self> {
         let (ty_domain, sub_domain) = split_sub_domain(ty_domain);
 
-        let fullname = format!("{}.{}", my_name, ty_domain);
+        let full_name = format!("{}.{}", my_name, ty_domain);
         let ty_domain = ty_domain.to_string();
         let sub_domain = sub_domain.map(str::to_string);
         let server = host_name.to_string();
@@ -96,7 +97,7 @@ impl ServiceInfo {
         let this = Self {
             ty_domain,
             sub_domain,
-            fullname,
+            full_name,
             server,
             addresses,
             port,
@@ -106,6 +107,7 @@ impl ServiceInfo {
             weight: 0,
             txt_properties,
             addr_auto: false,
+            my_name: my_name.to_string(),
         };
 
         Ok(this)
@@ -123,6 +125,11 @@ impl ServiceInfo {
     /// automatically when the host IPv4 addrs change.
     pub fn is_addr_auto(&self) -> bool {
         self.addr_auto
+    }
+
+    #[inline]
+    pub fn get_instance_name(&self) -> &str {
+        &self.my_name
     }
 
     /// Returns the service type including the domain label.
@@ -146,8 +153,8 @@ impl ServiceInfo {
     ///
     /// This is useful, for example, in unregister.
     #[inline]
-    pub fn get_fullname(&self) -> &str {
-        &self.fullname
+    pub fn get_full_name(&self) -> &str {
+        &self.full_name
     }
 
     /// Returns the properties from TXT records.
@@ -235,7 +242,7 @@ impl ServiceInfo {
     /// Returns whether the service info is ready to be resolved.
     pub(crate) fn is_ready(&self) -> bool {
         let some_missing = self.ty_domain.is_empty()
-            || self.fullname.is_empty()
+            || self.full_name.is_empty()
             || self.server.is_empty()
             || self.port == 0
             || self.addresses.is_empty();

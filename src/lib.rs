@@ -31,7 +31,7 @@
 //!
 //! ## Example: a client querying for a service type.
 //!
-//! ```rust
+//!```rust
 //! use mdns_sd::{ServiceDaemon, ServiceEvent};
 //!
 //! // Create a daemon
@@ -48,7 +48,7 @@
 //!     while let Ok(event) = receiver.recv() {
 //!         match event {
 //!             ServiceEvent::ServiceResolved(info) => {
-//!                 println!("Resolved a new service: {}", info.get_fullname());
+//!                 println!("Resolved a new service: {}", info.get_full_name());
 //!             }
 //!             other_event => {
 //!                 println!("Received other event: {:?}", &other_event);
